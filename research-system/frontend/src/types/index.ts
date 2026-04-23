@@ -44,6 +44,19 @@ export interface ConceptMapping {
   status: 'pending' | 'approved' | 'rejected'
 }
 
+export interface PaperCard {
+  id: string
+  title: string
+  authors: string[]
+  year: number | null
+  abstract: string
+  is_read: boolean
+  arxiv_url: string | null
+  semantic_scholar_url: string | null
+  top_connections: Array<{ title: string }>
+  community_label: string | null
+}
+
 export interface AgentEvent {
   type: string
   agent?: string

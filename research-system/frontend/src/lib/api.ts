@@ -1,4 +1,4 @@
-import type { GraphData, GraphNode, GraphEdge, PaperNode, PaperDetail, ConceptMapping } from '../types'
+import type { GraphData, GraphNode, GraphEdge, PaperNode, PaperDetail, ConceptMapping, PaperCard } from '../types'
 
 const BASE = import.meta.env.VITE_API_URL
 
@@ -38,6 +38,10 @@ export async function searchGraph(query: string): Promise<PaperNode[]> {
 
 export async function getPaper(id: string): Promise<PaperDetail> {
   return request<PaperDetail>(`/papers/${id}`)
+}
+
+export async function getPaperCard(id: string): Promise<PaperCard> {
+  return request<PaperCard>(`/papers/${id}/card`)
 }
 
 export async function getConnectionReport(paperId: string): Promise<string> {

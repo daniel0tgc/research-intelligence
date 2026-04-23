@@ -4,6 +4,31 @@
       "term_a": "Self-Attention",
       "term_b": "Scaled Dot-Product Attention",
       "canonical": "Self-Attention"
+    },
+    {
+      "term_a": "vq-wav2vec",
+      "term_b": "Discrete BERT",
+      "canonical": "vq-wav2vec"
+    },
+    {
+      "term_a": "Fine-tuning",
+      "term_b": "Transfer Learning",
+      "canonical": "Fine-tuning"
+    },
+    {
+      "term_a": "Latent Space Masking",
+      "term_b": "Masked Language Modeling",
+      "canonical": "Latent Space Masking"
+    },
+    {
+      "term_a": "Neurotransmitter Prediction from EM",
+      "term_b": "Neurotransmitter Identity",
+      "canonical": "Neurotransmitter Prediction from EM"
+    },
+    {
+      "term_a": "Codebook",
+      "term_b": "VQ-VAE",
+      "canonical": "Codebook"
     }
   ],
   "pending": []

@@ -35,12 +35,6 @@ function nodeColor(node: GraphNode, traversalPath: string[]): string {
   return '#6366f1'
 }
 
-function nodeOpacity(node: GraphNode): number {
-  if (node.__type === 'entity') return 0.6
-  const paper = node as GraphNode & { year: number | null }
-  const cutoff = new Date().getFullYear() - 1
-  return (paper.year ?? 0) >= cutoff ? 1.0 : 0.5
-}
 
 function nodeVal(node: GraphNode): number {
   const degree = (node as GraphNode & { degree?: number }).degree ?? 0
