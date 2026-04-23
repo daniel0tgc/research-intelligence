@@ -1,0 +1,10 @@
+{
+  "approved": [
+    {
+      "term_a": "Self-Attention",
+      "term_b": "Scaled Dot-Product Attention",
+      "canonical": "Self-Attention"
+    }
+  ],
+  "pending": []
+}
