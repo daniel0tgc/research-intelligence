@@ -8,7 +8,8 @@ def extract_text_from_pdf(path: Path) -> str:
         doc = fitz.open(str(path))
         pages = [page.get_text() for page in doc]
         doc.close()
-        return "\n".join(pages)
+        # Strip null bytes — PostgreSQL UTF8 rejects them
+        return "\n".join(pages).replace("\x00", "")
     except Exception:
         return ""
 

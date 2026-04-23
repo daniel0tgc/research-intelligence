@@ -1,7 +1,10 @@
+import asyncio
 import voyageai
 from backend.config import settings
 
 _client: voyageai.AsyncClient | None = None
+# Global semaphore: only one embedding call in flight at a time across all concurrent ingestions
+_embed_lock = asyncio.Semaphore(1)
 
 
 def get_client() -> voyageai.AsyncClient:
@@ -11,18 +14,31 @@ def get_client() -> voyageai.AsyncClient:
     return _client
 
 
+async def _embed_batch_with_retry(client, batch: list[str], max_retries: int = 5) -> list[list[float]]:
+    """Embed one batch with exponential backoff on RateLimitError."""
+    delay = 22
+    for attempt in range(max_retries):
+        try:
+            result = await client.embed(batch, model="voyage-large-2")
+            return result.embeddings
+        except voyageai.error.RateLimitError:
+            if attempt == max_retries - 1:
+                raise
+            await asyncio.sleep(delay)
+            delay = min(delay * 2, 120)
+    return []
+
+
 async def embed_texts(texts: list[str]) -> list[list[float]]:
-    """Embed a list of texts using voyage-large-2. Batches in groups of 8 with delay."""
-    import asyncio
+    """Embed texts using voyage-large-2. Serializes globally to respect 3 RPM free-tier limit."""
     client = get_client()
     all_embeddings: list[list[float]] = []
-    # Use batch size of 8 to stay within 10K TPM on free tier (~1500 tokens × 8 = 12K).
-    # Add a 21-second delay between batches to respect the 3 RPM free-tier limit.
     batch_size = 8
     for idx, i in enumerate(range(0, len(texts), batch_size)):
-        if idx > 0:
-            await asyncio.sleep(21)
-        batch = texts[i : i + batch_size]
-        result = await client.embed(batch, model="voyage-large-2")
-        all_embeddings.extend(result.embeddings)
+        batch = texts[i:i + batch_size]
+        async with _embed_lock:
+            if idx > 0:
+                await asyncio.sleep(22)
+            embeddings = await _embed_batch_with_retry(client, batch)
+            all_embeddings.extend(embeddings)
     return all_embeddings
